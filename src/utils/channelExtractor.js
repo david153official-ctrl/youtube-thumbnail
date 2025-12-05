@@ -13,13 +13,77 @@ async function getChannelId(channelIdentifier, apiKey) {
         return channelIdentifier.value;
     }
 
-    // For @handle, we need to search or use the forHandle parameter (newer API)
+    // For @handle format
     if (channelIdentifier.type === 'handle') {
-        const handle = channelIdentifier.value;
+        const handle = channelIdentifier.value.replace('@', '');
+
         try {
-            // Try newer API with forHandle parameter
+            // Method 1: Try forUsername parameter (works for some handles)
+            const usernameResponse = await fetch(
+                `${API_BASE_URL}/channels?part=id&forUsername=${handle}&key=${apiKey}`
+            );
+            const usernameData = await usernameResponse.json();
+
+            if (usernameData.items && usernameData.items.length > 0) {
+                return usernameData.items[0].id;
+            }
+
+            // Method 2: Use search API with exact match verification
+            const searchResponse = await fetch(
+                `${API_BASE_URL}/search?part=snippet&type=channel&q=${encodeURIComponent(handle)}&key=${apiKey}&maxResults=10`
+            );
+
+            if (!searchResponse.ok) {
+                const errorData = await searchResponse.json();
+                throw new Error(errorData.error?.message || 'Search failed');
+            }
+
+            const searchData = await searchResponse.json();
+
+            if (searchData.items && searchData.items.length > 0) {
+                // Try to find exact match by custom URL
+                for (const item of searchData.items) {
+                    const channelId = item.id.channelId;
+
+                    // Fetch full channel details to verify custom URL
+                    const verifyResponse = await fetch(
+                        `${API_BASE_URL}/channels?part=snippet,contentDetails&id=${channelId}&key=${apiKey}`
+                    );
+                    const verifyData = await verifyResponse.json();
+
+                    if (verifyData.items && verifyData.items.length > 0) {
+                        const channel = verifyData.items[0];
+                        const customUrl = channel.snippet.customUrl;
+
+                        // Check if custom URL matches (with or without @)
+                        if (customUrl && (
+                            customUrl === `@${handle}` ||
+                            customUrl === handle ||
+                            customUrl.toLowerCase() === `@${handle.toLowerCase()}` ||
+                            customUrl.toLowerCase() === handle.toLowerCase()
+                        )) {
+                            return channelId;
+                        }
+                    }
+                }
+
+                // If no exact match found, return the first result as fallback
+                // (but this might be wrong - user should verify)
+                return searchData.items[0].id.channelId;
+            }
+
+            throw new Error(`Could not find channel for handle: @${handle}`);
+        } catch (error) {
+            throw new Error(`Failed to find channel ID for handle @${handle}: ${error.message}`);
+        }
+    }
+
+    // For /user/USERNAME format
+    if (channelIdentifier.type === 'user') {
+        const username = channelIdentifier.value;
+        try {
             const response = await fetch(
-                `${API_BASE_URL}/channels?part=id&forHandle=${handle.replace('@', '')}&key=${apiKey}`
+                `${API_BASE_URL}/channels?part=id&forUsername=${username}&key=${apiKey}`
             );
             const data = await response.json();
 
@@ -27,21 +91,13 @@ async function getChannelId(channelIdentifier, apiKey) {
                 return data.items[0].id;
             }
 
-            // Fallback: search for the channel
-            const searchResponse = await fetch(
-                `${API_BASE_URL}/search?part=id&type=channel&q=${encodeURIComponent(handle)}&key=${apiKey}&maxResults=1`
-            );
-            const searchData = await searchResponse.json();
-
-            if (searchData.items && searchData.items.length > 0) {
-                return searchData.items[0].id.channelId;
-            }
+            throw new Error(`Could not find channel for username: ${username}`);
         } catch (error) {
-            throw new Error(`Failed to find channel ID for handle ${handle}: ${error.message}`);
+            throw new Error(`Failed to find channel ID for username ${username}: ${error.message}`);
         }
     }
 
-    // For custom or user URLs, search by name
+    // For /c/CUSTOM or other formats, use search
     const searchQuery = channelIdentifier.value;
     try {
         const response = await fetch(
@@ -52,19 +108,19 @@ async function getChannelId(channelIdentifier, apiKey) {
         if (data.items && data.items.length > 0) {
             return data.items[0].id.channelId;
         }
+
+        throw new Error(`Could not find channel for: ${searchQuery}`);
     } catch (error) {
         throw new Error(`Failed to find channel ID for ${searchQuery}: ${error.message}`);
     }
-
-    throw new Error('Could not find channel ID');
 }
 
 /**
  * Fetch all videos from a channel
- * @param {string} channelId - YouTube channel ID
+ * @param {string} channelId - YouTube channel ID  
  * @param {string} apiKey - YouTube Data API key
  * @param {number} maxResults - Maximum number of videos to fetch (default: 50)
- * @returns {Promise<Array>} - Array of video objects
+ * @returns {Promise<Object>} - Object with videos array and metadata
  */
 async function fetchChannelVideos(channelId, apiKey, maxResults = 50) {
     try {
@@ -137,6 +193,8 @@ export async function extractChannelVideos(channelIdentifier, apiKey, maxResults
     try {
         // Get the channel ID
         const channelId = await getChannelId(channelIdentifier, apiKey);
+
+        console.log('Found channel ID:', channelId); // Debug logging
 
         // Fetch videos from the channel
         const result = await fetchChannelVideos(channelId, apiKey, maxResults);
