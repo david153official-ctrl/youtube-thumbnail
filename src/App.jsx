@@ -43,9 +43,12 @@ function App() {
     setVideoId(null);
     setChannelVideos(null);
 
+    console.log('🎬 Extract clicked! URL:', url);
     const urlType = getUrlType(url);
+    console.log('📋 URL Type detected:', urlType);
 
     if (!urlType) {
+      console.error('❌ Invalid URL - no type detected');
       setError('유효하지 않은 유튜브 URL입니다. 영상 URL 또는 채널 URL을 입력해주세요.');
       return;
     }
