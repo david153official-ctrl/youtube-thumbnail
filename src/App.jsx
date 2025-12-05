@@ -4,6 +4,7 @@ import { getYouTubeVideoId, getUrlType, getChannelIdentifier } from './utils/you
 import { extractChannelVideos } from './utils/channelExtractor';
 import ThumbnailDisplay from './components/ThumbnailDisplay';
 import ChannelVideosDisplay from './components/ChannelVideosDisplay';
+import ApiGuide from './components/ApiGuide';
 
 function App() {
   const [url, setUrl] = useState('');
@@ -13,6 +14,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
+  const [showApiGuide, setShowApiGuide] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
 
   // Load API key from localStorage on mount
@@ -77,6 +79,9 @@ function App() {
 
   return (
     <div className="App">
+      {/* API Guide Modal */}
+      {showApiGuide && <ApiGuide onClose={() => setShowApiGuide(false)} />}
+
       <header style={{ marginBottom: '3rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
           <Youtube size={48} color="#ef4444" />
@@ -124,14 +129,21 @@ function App() {
             <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>YouTube Data API 키 입력</h3>
             <p style={{ fontSize: '0.9rem', color: '#888', marginBottom: '1rem' }}>
               채널의 모든 영상을 가져오려면 YouTube Data API v3 키가 필요합니다.
-              <a
-                href="https://console.cloud.google.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: '#3b82f6', marginLeft: '0.5rem' }}
+              <button
+                onClick={() => setShowApiGuide(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#3b82f6',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  marginLeft: '0.5rem',
+                  padding: 0,
+                  font: 'inherit'
+                }}
               >
-                API 키 발급받기
-              </a>
+                API 키 발급 가이드 보기
+              </button>
             </p>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input
