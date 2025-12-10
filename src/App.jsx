@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Youtube, Search, Key, X } from 'lucide-react';
+import { Youtube, Search, Key, X, Sparkles, Image } from 'lucide-react';
 import { getYouTubeVideoId, getUrlType, getChannelIdentifier } from './utils/youtube';
 import { extractChannelVideos } from './utils/channelExtractor';
 import ThumbnailDisplay from './components/ThumbnailDisplay';
 import ChannelVideosDisplay from './components/ChannelVideosDisplay';
 import ApiGuide from './components/ApiGuide';
+import AILandingPage from './components/AILandingPage';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('ai-landing'); // 'ai-landing' or 'thumbnail-extractor'
   const [url, setUrl] = useState('');
   const [videoId, setVideoId] = useState(null);
   const [channelVideos, setChannelVideos] = useState(null);
@@ -80,8 +82,124 @@ function App() {
     }
   };
 
+  // AI 랜딩 페이지인 경우 별도로 렌더링
+  if (currentPage === 'ai-landing') {
+    return (
+      <div className="App">
+        {/* 페이지 전환 네비게이션 */}
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 1000,
+          display: 'flex',
+          gap: '0.5rem',
+          background: 'rgba(26, 26, 26, 0.95)',
+          padding: '0.5rem',
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(10px)'
+        }}>
+          <button
+            onClick={() => setCurrentPage('ai-landing')}
+            style={{
+              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '0.6rem 1.2rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.9rem',
+              fontWeight: '600'
+            }}
+          >
+            <Sparkles size={16} />
+            AI 콘텐츠 생성
+          </button>
+          <button
+            onClick={() => setCurrentPage('thumbnail-extractor')}
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: '#aaa',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '0.6rem 1.2rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.9rem',
+              fontWeight: '600'
+            }}
+          >
+            <Image size={16} />
+            썸네일 추출기
+          </button>
+        </div>
+        <AILandingPage />
+      </div>
+    );
+  }
+
   return (
     <div className="App">
+      {/* 페이지 전환 네비게이션 */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        zIndex: 1000,
+        display: 'flex',
+        gap: '0.5rem',
+        background: 'rgba(26, 26, 26, 0.95)',
+        padding: '0.5rem',
+        borderRadius: '12px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <button
+          onClick={() => setCurrentPage('ai-landing')}
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            color: '#aaa',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.9rem',
+            fontWeight: '600'
+          }}
+        >
+          <Sparkles size={16} />
+          AI 콘텐츠 생성
+        </button>
+        <button
+          onClick={() => setCurrentPage('thumbnail-extractor')}
+          style={{
+            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.9rem',
+            fontWeight: '600'
+          }}
+        >
+          <Image size={16} />
+          썸네일 추출기
+        </button>
+      </div>
+
       {/* API Guide Modal */}
       {showApiGuide && <ApiGuide onClose={() => setShowApiGuide(false)} />}
 
