@@ -197,7 +197,17 @@ function App() {
         )}
 
         <footer className="page-footer">
-          <p>© {new Date().getFullYear()} YouTube Thumbnail Extractor. Built with React & Vite.</p>
+          <p>
+            Made with{' '}
+            <a
+              href="https://unicorn.studio/"
+              target="_blank"
+              rel="noreferrer"
+              className="footer-link"
+            >
+              Unicorn Studio
+            </a>
+          </p>
         </footer>
       </div>
     </div>

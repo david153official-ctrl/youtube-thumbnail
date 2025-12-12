@@ -376,3 +376,12 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+.footer-link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.footer-link:hover {
+  color: #aaaaaa;
+}
