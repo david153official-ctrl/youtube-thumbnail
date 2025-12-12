@@ -369,19 +369,3 @@
   }
 }
 
-/* Footer */
-.page-footer {
-  margin-top: 4rem;
-  color: #666;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.footer-link {
-  color: inherit;
-  text-decoration: underline;
-}
-
-.footer-link:hover {
-  color: #aaaaaa;
-}

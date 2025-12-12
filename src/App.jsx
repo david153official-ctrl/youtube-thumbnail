@@ -195,20 +195,6 @@ function App() {
         {channelVideos && (
           <ChannelVideosDisplay videos={channelVideos.videos} totalResults={channelVideos.totalResults} />
         )}
-
-        <footer className="page-footer">
-          <p>
-            Made with{' '}
-            <a
-              href="https://unicorn.studio/"
-              target="_blank"
-              rel="noreferrer"
-              className="footer-link"
-            >
-              Unicorn Studio
-            </a>
-          </p>
-        </footer>
       </div>
     </div>
   );
