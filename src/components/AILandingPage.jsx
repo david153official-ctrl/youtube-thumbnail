@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Video, Zap, TrendingUp } from 'lucide-react';
+import UnicornStudioEmbed from './UnicornStudioEmbed';
 import './AILandingPage.css';
 
 const AILandingPage = () => {
@@ -61,20 +62,27 @@ const AILandingPage = () => {
         ))}
       </div>
 
+      {/* 상단 UnicornStudio 히어로 */}
+      <section className="us-hero">
+        <div className="us-hero-bg" aria-hidden="true">
+          <UnicornStudioEmbed projectId="yliYCk9TOikh4aGNlWjn" className="us-embed" />
+        </div>
+        <div className="us-hero-overlay" aria-hidden="true" />
+
+        <div className="content-wrapper us-hero-content">
+          {/* 헤더 섹션 */}
+          <header className="hero-section">
+            <div className="hero-icon">
+              <Sparkles size={48} strokeWidth={2} />
+            </div>
+            <h1 className="main-title">AI로 당신의 콘텐츠를 만들어보세요</h1>
+            <p className="subtitle">몇 초 만에 전문가급 유튜브 콘텐츠를 자동 생성하세요</p>
+          </header>
+        </div>
+      </section>
+
       {/* 메인 컨텐츠 */}
       <div className="content-wrapper">
-        {/* 헤더 섹션 */}
-        <header className="hero-section">
-          <div className="hero-icon">
-            <Sparkles size={48} strokeWidth={2} />
-          </div>
-          <h1 className="main-title">
-            AI로 당신의 콘텐츠를 만들어보세요
-          </h1>
-          <p className="subtitle">
-            몇 초 만에 전문가급 유튜브 콘텐츠를 자동 생성하세요
-          </p>
-        </header>
 
         {/* 검색 바 섹션 */}
         <section className="search-section">
