@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Youtube, Search, Key, X, Sparkles, Image } from 'lucide-react';
+import { Youtube, Search, Key, X } from 'lucide-react';
 import { getYouTubeVideoId, getUrlType, getChannelIdentifier } from './utils/youtube';
 import { extractChannelVideos } from './utils/channelExtractor';
 import ThumbnailDisplay from './components/ThumbnailDisplay';
 import ChannelVideosDisplay from './components/ChannelVideosDisplay';
 import ApiGuide from './components/ApiGuide';
-import AILandingPage from './components/AILandingPage';
+import UnicornStudioEmbed from './components/UnicornStudioEmbed';
+import './App.css';
+import './ThumbnailExtractorPage.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('ai-landing'); // 'ai-landing' or 'thumbnail-extractor'
   const [url, setUrl] = useState('');
   const [videoId, setVideoId] = useState(null);
   const [channelVideos, setChannelVideos] = useState(null);
@@ -82,151 +83,42 @@ function App() {
     }
   };
 
-  // AI 랜딩 페이지인 경우 별도로 렌더링
-  if (currentPage === 'ai-landing') {
-    return (
-      <div className="App">
-        {/* 페이지 전환 네비게이션 */}
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          display: 'flex',
-          gap: '0.5rem',
-          background: 'rgba(26, 26, 26, 0.95)',
-          padding: '0.5rem',
-          borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(10px)'
-        }}>
-          <button
-            onClick={() => setCurrentPage('ai-landing')}
-            style={{
-              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '0.6rem 1.2rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.9rem',
-              fontWeight: '600'
-            }}
-          >
-            <Sparkles size={16} />
-            AI 콘텐츠 생성
-          </button>
-          <button
-            onClick={() => setCurrentPage('thumbnail-extractor')}
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              color: '#aaa',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              padding: '0.6rem 1.2rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.9rem',
-              fontWeight: '600'
-            }}
-          >
-            <Image size={16} />
-            썸네일 추출기
-          </button>
-        </div>
-        <AILandingPage />
-      </div>
-    );
-  }
-
   return (
-    <div className="App">
-      {/* 페이지 전환 네비게이션 */}
-      <div style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        zIndex: 1000,
-        display: 'flex',
-        gap: '0.5rem',
-        background: 'rgba(26, 26, 26, 0.95)',
-        padding: '0.5rem',
-        borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(10px)'
-      }}>
-        <button
-          onClick={() => setCurrentPage('ai-landing')}
-          style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            color: '#aaa',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '0.6rem 1.2rem',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.9rem',
-            fontWeight: '600'
-          }}
-        >
-          <Sparkles size={16} />
-          AI 콘텐츠 생성
-        </button>
-        <button
-          onClick={() => setCurrentPage('thumbnail-extractor')}
-          style={{
-            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-            color: 'white',
-            border: 'none',
-            padding: '0.6rem 1.2rem',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.9rem',
-            fontWeight: '600'
-          }}
-        >
-          <Image size={16} />
-          썸네일 추출기
-        </button>
+    <div className="thumbnail-page">
+      {/* 배경 애니메이션 */}
+      <div className="background-animation" aria-hidden="true">
+        {[...Array(20)].map((_, i) => (
+          <div key={i} className={`data-line line-${i + 1}`} />
+        ))}
       </div>
 
       {/* API Guide Modal */}
       {showApiGuide && <ApiGuide onClose={() => setShowApiGuide(false)} />}
 
-      <header style={{ marginBottom: '3rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
-          <Youtube size={48} color="#ef4444" />
-          <h1>유튜브 썸네일 추출기</h1>
+      {/* 상단 UnicornStudio 히어로 */}
+      <section className="us-hero">
+        <div className="us-hero-bg" aria-hidden="true">
+          <UnicornStudioEmbed projectId="yliYCk9TOikh4aGNlWjn" className="us-embed" />
         </div>
-        <p style={{ fontSize: '1.2rem', color: '#aaa', maxWidth: '600px', margin: '0 auto' }}>
-          유튜브 영상 또는 채널의 고화질 썸네일을 즉시 다운로드하세요.
-        </p>
+        <div className="us-hero-overlay" aria-hidden="true" />
 
-        {/* API Key Management */}
-        <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+        <div className="content-wrapper us-hero-content">
+          <header className="hero-section">
+            <div className="hero-icon" aria-hidden="true">
+              <Youtube size={44} strokeWidth={2} />
+            </div>
+            <h1 className="main-title">유튜브 썸네일 추출기</h1>
+            <p className="subtitle">유튜브 영상 또는 채널의 고화질 썸네일을 즉시 다운로드하세요.</p>
+
+            {/* API Key Management */}
+            <div className="api-key-row">
           {apiKey ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#4ade80', fontSize: '0.9rem' }}>
+              <div className="api-key-status">
               <Key size={16} />
               <span>API 키 설정됨</span>
               <button
                 onClick={clearApiKey}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#ef4444',
-                  cursor: 'pointer',
-                  padding: '4px'
-                }}
+                className="api-key-clear"
                 title="API 키 삭제"
               >
                 <X size={16} />
@@ -235,88 +127,79 @@ function App() {
           ) : (
             <button
               onClick={() => setShowApiKeyInput(!showApiKeyInput)}
-              className="btn-secondary"
-              style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+              className="btn-secondary api-key-btn"
             >
               <Key size={16} />
               API 키 설정
             </button>
           )}
-        </div>
-
-        {/* API Key Input */}
-        {showApiKeyInput && (
-          <div className="card" style={{ maxWidth: '600px', margin: '1rem auto', padding: '1.5rem' }}>
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>YouTube Data API 키 입력</h3>
-            <p style={{ fontSize: '0.9rem', color: '#888', marginBottom: '1rem' }}>
-              채널의 모든 영상을 가져오려면 YouTube Data API v3 키가 필요합니다.
-              <button
-                onClick={() => setShowApiGuide(true)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#3b82f6',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                  marginLeft: '0.5rem',
-                  padding: 0,
-                  font: 'inherit'
-                }}
-              >
-                API 키 발급 가이드 보기
-              </button>
-            </p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input
-                type="text"
-                placeholder="여기에 API 키를 입력하세요..."
-                value={tempApiKey}
-                onChange={(e) => setTempApiKey(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <button onClick={saveApiKey} className="btn-primary">
-                저장
-              </button>
-              <button onClick={() => setShowApiKeyInput(false)} className="btn-secondary">
-                취소
-              </button>
             </div>
-          </div>
+
+            {/* 검색 바 */}
+            <section className="search-section">
+              <form onSubmit={handleExtract} className="search-form">
+                <div className="search-container">
+                  <div className="search-input-wrap">
+                    <Search size={20} className="search-icon" />
+                    <input
+                      type="text"
+                      className="search-input"
+                      placeholder="유튜브 영상 또는 채널 URL을 붙여넣으세요..."
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                  <button type="submit" className="search-button" disabled={loading}>
+                    {loading ? '로딩 중...' : '썸네일 추출'}
+                  </button>
+                </div>
+              </form>
+
+              {error && <p className="form-error">{error}</p>}
+            </section>
+          </header>
+
+          {/* API Key Input */}
+          {showApiKeyInput && (
+            <div className="card api-key-card">
+              <h3 className="api-key-title">YouTube Data API 키 입력</h3>
+              <p className="api-key-desc">
+                채널의 모든 영상을 가져오려면 YouTube Data API v3 키가 필요합니다.
+                <button onClick={() => setShowApiGuide(true)} className="api-guide-link">
+                  API 키 발급 가이드 보기
+                </button>
+              </p>
+              <div className="api-key-input-row">
+                <input
+                  type="text"
+                  placeholder="여기에 API 키를 입력하세요..."
+                  value={tempApiKey}
+                  onChange={(e) => setTempApiKey(e.target.value)}
+                />
+                <button onClick={saveApiKey} className="btn-primary">
+                  저장
+                </button>
+                <button onClick={() => setShowApiKeyInput(false)} className="btn-secondary">
+                  취소
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <div className="content-wrapper">
+        {/* Display results */}
+        {videoId && <ThumbnailDisplay videoId={videoId} />}
+        {channelVideos && (
+          <ChannelVideosDisplay videos={channelVideos.videos} totalResults={channelVideos.totalResults} />
         )}
-      </header>
 
-      <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <form onSubmit={handleExtract} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '250px', position: 'relative' }}>
-            <Search size={20} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
-            <input
-              type="text"
-              placeholder="유튜브 영상 또는 채널 URL을 붙여넣으세요..."
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              style={{ paddingLeft: '40px' }}
-              disabled={loading}
-            />
-          </div>
-          <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? '로딩 중...' : '썸네일 추출'}
-          </button>
-        </form>
-        {error && <p style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'left' }}>{error}</p>}
+        <footer className="page-footer">
+          <p>© {new Date().getFullYear()} YouTube Thumbnail Extractor. Built with React & Vite.</p>
+        </footer>
       </div>
-
-      {/* Display results based on mode */}
-      {videoId && <ThumbnailDisplay videoId={videoId} />}
-      {channelVideos && (
-        <ChannelVideosDisplay
-          videos={channelVideos.videos}
-          totalResults={channelVideos.totalResults}
-        />
-      )}
-
-      <footer style={{ marginTop: '4rem', color: '#666', fontSize: '0.9rem' }}>
-        <p>© {new Date().getFullYear()} YouTube Thumbnail Extractor. Built with React & Vite.</p>
-      </footer>
     </div>
   );
 }
